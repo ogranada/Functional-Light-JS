@@ -203,7 +203,7 @@ If the *how* of this discussion on monad methods is unclear so far, go back and 
 
 It's very common in FP material to cover well-known monads like Maybe. Actually, the Maybe monad is a particular pairing of two other simpler monads: Just and Nothing.
 
-We've already seen Just; Nothing is a monad that holds an empty value. Maybe is a monad that either holds a Just or an Empty.
+We've already seen Just; Nothing is a monad that holds an empty value. Maybe is a monad that either holds a Just or a Nothing.
 
 Here's a minimal implementation of Maybe:
 
@@ -257,9 +257,9 @@ The core spirit of a Monad says that it must be valid for all values and cannot 
 
 The earlier implementation of the Maybe monad I provided differs from other Maybes primarily in that it does not have the empty-check in it. Also, we present `Maybe` merely as a loose pairing of `Just(..)`/`Nothing()`.
 
-So wait. If we don't get the automatic short-circuting, why is Maybe useful at all?!? That seems like its whole point.
+So wait. If we don't get the automatic short-circuiting, why is Maybe useful at all?!? That seems like its whole point.
 
-Never fear! We can simply provide the empty-check externally, and the rest of the short-circuting behavior of the Maybe monad will work just fine. Here's how you could do the nested-property access (`someObj.something.else.entirely`) from before, but more "correctly":
+Never fear! We can simply provide the empty-check externally, and the rest of the short-circuiting behavior of the Maybe monad will work just fine. Here's how you could do the nested-property access (`someObj.something.else.entirely`) from before, but more "correctly":
 
 ```js
 function isEmpty(val) {

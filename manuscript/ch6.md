@@ -95,7 +95,7 @@ Notice that we did not change the array that `arr` references, but rather create
 
 Analyze `addValue(..)` based on what we discussed in [Chapter 5](ch5.md) about side causes/effects. Is it pure? Does it have referential transparency? Given the same array, will it always produce the same output? Is it free of both side causes and side effects? **Yes.**
 
-Imagine the `[1,2,3]` array represents a sequence of data from some previous operations and we stored in some variable. It is our current state. If we want to compute what the next state of our application is, we call `addValue(..)`. But we want that act of next-state computation to be direct and explicit. So the `addValue(..)` operation takes a direct input, returns a direct output, and avoids creating a side effect by mutating the original array that `arr` references.
+Imagine the `[1,2,3]` array represents a sequence of data from some previous operations and we stored in some variable. It is our current state. If we want to compute what the next state of our application is, we call `addValue(..)`. But we want that act of next-state computation to be direct and explicit. So the `addValue(..)` operation takes a direct input, returns a direct output, and avoids the side effect of mutating the original array that `arr` references.
 
 This means we can calculate the new state of `[1,2,3,4]` and be fully in control of that transition of states. No other part of our program can unexpectedly transition us to that state early, or to another state entirely, like `[1,2,3,5]`. By being disciplined about our values and treating them as immutable, we drastically reduce the surface area of surprise, making our programs easier to read, reason about, and ultimately trust.
 
@@ -142,7 +142,7 @@ We already saw a trick in the previous chapter to avoid such a surprise:
 ```js
 var arr = [1,2,3];
 
-foo( arr.slice() );         // ha! a copy!
+foo( [...arr] );         // ha! a copy!
 
 console.log( arr[0] );      // 1
 ```
@@ -458,7 +458,7 @@ Recall one of the implementations of [`compose(..)` from Chapter 4](ch4.md/#user
 function compose(...fns) {
     return function composed(result){
         // copy the array of functions
-        var list = fns.slice();
+        var list = [...fns];
 
         while (list.length > 0) {
             // take the last function off the end of the list
@@ -495,7 +495,7 @@ f( 4 );     // 3
 f( 4 );     // 4 <-- uh oh!
 ```
 
-The second usage of `f(..)` here wasn't correct, since we mutated that `fns` during the first call, which affected any subsequent uses. Depending on the circumstances, making a copy of an array like `list = fns.slice()` may or may not be necessary. But I think it's safest to assume you need it -- even if only for readability sake! -- unless you can prove you don't, rather than the other way around.
+The second usage of `f(..)` here wasn't correct, since we mutated that `fns` during the first call, which affected any subsequent uses. Depending on the circumstances, making a copy of an array like `list = [...fns]` may or may not be necessary. But I think it's safest to assume you need it -- even if only for readability sake! -- unless you can prove you don't, rather than the other way around.
 
 Be disciplined and always treat *received values* as immutable, whether they are or not. That effort will improve the readability and trustability of your code.
 

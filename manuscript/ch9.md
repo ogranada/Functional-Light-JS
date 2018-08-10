@@ -417,7 +417,7 @@ Recall in [Chapter 4, we discussed the `compose(..)` utility](ch4.md/#user-conte
 ```js
 function compose(...fns) {
     return function composed(result){
-        return fns.reverse().reduce( function reducer(result,fn){
+        return [...fns].reverse().reduce( function reducer(result,fn){
             return fn( result );
         }, result );
     };
@@ -489,7 +489,7 @@ function compose(...fns) {
 }
 ```
 
-Now, we don't need to do `fns.reverse()`; we just reduce from the other direction!
+Now, we don't need to do `[...fns].reverse()`; we just reduce from the other direction!
 
 ### Map as Reduce
 
@@ -543,7 +543,7 @@ Now that we feel somewhat comfortable with the foundational list operations `map
 
 ### Unique
 
-Filtering a list to include only unique values, based on `indexOf(..)` searching (which uses `===` strict equality comparision):
+Filtering a list to include only unique values, based on `indexOf(..)` searching (which uses `===` strict equality comparison):
 
 ```js
 var unique =
@@ -732,8 +732,8 @@ An implementation of `zip(..)`:
 ```js
 function zip(arr1,arr2) {
     var zipped = [];
-    arr1 = arr1.slice();
-    arr2 = arr2.slice();
+    arr1 = [...arr1];
+    arr2 = [...arr2];
 
     while (arr1.length > 0 && arr2.length > 0) {
         zipped.push( [ arr1.shift(), arr2.shift() ] );
@@ -743,7 +743,7 @@ function zip(arr1,arr2) {
 }
 ```
 
-The `arr1.slice()` and `arr2.slice()` calls ensure `zip(..)` is pure by not causing side effects on the received array references.
+The `[...arr1]` and `[...arr2]` copies ensure `zip(..)` is pure by not causing side effects on the received array references.
 
 **Note:** There are some decidedly un-FP things going on in this implementation. There's an imperative `while`-loop and mutations of lists with both `shift()` and `push(..)`. Earlier in the book, I asserted that it's reasonable for pure functions to use impure behavior inside them (usually for performance), as long as the effects are fully self-contained. This implementation is safely pure.
 
@@ -777,8 +777,8 @@ So, let's define a `mergeLists(..)` that works more like we'd expect:
 ```js
 function mergeLists(arr1,arr2) {
     var merged = [];
-    arr1 = arr1.slice();
-    arr2 = arr2.slice();
+    arr1 = [...arr1];
+    arr2 = [...arr2];
 
     while (arr1.length > 0 || arr2.length > 0) {
         if (arr1.length > 0) {

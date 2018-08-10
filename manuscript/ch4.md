@@ -205,7 +205,7 @@ We can implement a general `compose(..)` utility like this:
 function compose(...fns) {
     return function composed(result){
         // copy the array of functions
-        var list = fns.slice();
+        var list = [...fns];
 
         while (list.length > 0) {
             // take the last function off the end of the list
@@ -221,7 +221,7 @@ function compose(...fns) {
 var compose =
     (...fns) =>
         result => {
-            var list = fns.slice();
+            var list = [...fns];
 
             while (list.length > 0) {
                 // take the last function off the end of the list
@@ -233,7 +233,7 @@ var compose =
         };
 ```
 
-**Warning:** `...fns` is a collected array of arguments, not a passed-in array, and as such, it's local to `compose(..)`. It may be tempting to think the `fns.slice()` would thus be unnecessary. However, in this particular implementation, `.pop()` inside the inner `composed(..)` function is mutating the list, so if we didn't make a copy each time, the returned composed function could only be used reliably once. We'll revisit this hazard in [Chapter 6](ch6.md/#user-content-hiddenmutation).
+**Warning:** `fns` is a collected array of arguments, not a passed-in array, and as such, it's local to `compose(..)`. It may be tempting to think the `[...fns]` would thus be unnecessary. However, in this particular implementation, `.pop()` inside the inner `composed(..)` function is mutating the list, so if we didn't make a copy each time, the returned composed function could only be used reliably once. We'll revisit this hazard in [Chapter 6](ch6.md/#user-content-hiddenmutation).
 
 Now let's look at an example of composing more than two functions. Recalling our `uniqueWords(..)` composition example, let's add a `skipShortWords(..)` to the mix:
 
@@ -312,7 +312,7 @@ The original version of `compose(..)` uses a loop and eagerly (aka, immediately)
 ```js
 function compose(...fns) {
     return function composed(result){
-        return fns.reverse().reduce( function reducer(result,fn){
+        return [...fns].reverse().reduce( function reducer(result,fn){
             return fn( result );
         }, result );
     };
@@ -321,14 +321,14 @@ function compose(...fns) {
 // or the ES6 => form
 var compose = (...fns) =>
     result =>
-        fns.reverse().reduce(
+        [...fns].reverse().reduce(
             (result,fn) =>
                 fn( result )
             , result
         );
 ```
 
-**Note:** This implementation of `compose(..)` uses `fns.reverse().reduce(..)` to reduce from right-to-left. We'll [revisit `compose(..)` in Chapter 9](ch9.md/#user-content-composereduceright), instead using `reduceRight(..)` for that purpose.
+**Note:** This implementation of `compose(..)` uses `[...fns].reverse().reduce(..)` to reduce from right-to-left. We'll [revisit `compose(..)` in Chapter 9](ch9.md/#user-content-composereduceright), instead using `reduceRight(..)` for that purpose.
 
 Notice that the `reduce(..)` looping happens each time the final `composed(..)` function is run, and that each intermediate `result(..)` is passed along to the next iteration as the input to the next call.
 
@@ -423,7 +423,7 @@ The reverse ordering, composing from left-to-right, has a common name: `pipe(..)
 ```js
 function pipe(...fns) {
     return function piped(result){
-        var list = fns.slice();
+        var list = [...fns];
 
         while (list.length > 0) {
             // take the first function from the list
